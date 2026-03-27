@@ -183,7 +183,8 @@ const BOXES = [
 const fuse = new Fuse(BOXES, {
   keys: ['id','room','cat','contents','notes'],
   threshold: 0.35,
-  includeScore: true
+  includeScore: true,
+  ignoreLocation: true
 });
 
 let activeFilter = 'all';
