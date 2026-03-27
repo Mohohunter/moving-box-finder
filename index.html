@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Moving Box Finder</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f4f8; min-height: 100vh; }
+    header { background: #2563eb; color: white; padding: 24px; text-align: center; box-shadow: 0 2px 8px rgba(0,0,0,0.15); }
+    header h1 { font-size: 2rem; font-weight: 700; }
+    header p { opacity: 0.85; margin-top: 4px; }
+    .container { max-width: 900px; margin: 32px auto; padding: 0 16px; }
+    .search-bar { display: flex; gap: 12px; margin-bottom: 24px; }
+    .search-bar input { flex: 1; padding: 14px 18px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 1rem; outline: none; transition: border 0.2s; }
+    .search-bar input:focus { border-color: #2563eb; }
+    .search-bar select { padding: 14px 18px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 0.95rem; background: white; outline: none; cursor: pointer; }
+    .stats { display: flex; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .stat-card { background: white; border-radius: 10px; padding: 16px 24px; flex: 1; min-width: 140px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .stat-card .num { font-size: 2rem; font-weight: 700; color: #2563eb; }
+    .stat-card .label { font-size: 0.85rem; color: #64748b; margin-top: 2px; }
+    .results-info { color: #64748b; font-size: 0.9rem; margin-bottom: 12px; }
+    .box-card { background: white; border-radius: 12px; margin-bottom: 16px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); overflow: hidden; }
+    .box-header { display: flex; align-items: center; justify-content: space-between; padding: 16px 20px; cursor: pointer; user-select: none; border-bottom: 1px solid #f1f5f9; }
+    .box-header:hover { background: #f8fafc; }
+    .box-title { display: flex; align-items: center; gap: 12px; }
+    .box-icon { font-size: 1.5rem; }
+    .box-name { font-weight: 600; font-size: 1.05rem; color: #1e293b; }
+    .box-room { font-size: 0.8rem; color: #64748b; margin-top: 2px; }
+    .box-badge { background: #eff6ff; color: #2563eb; border-radius: 20px; padding: 4px 12px; font-size: 0.8rem; font-weight: 600; white-space: nowrap; }
+    .box-items { padding: 0 20px 16px; }
+    .item-list { list-style: none; margin-top: 12px; }
+    .item-list li { padding: 8px 0; border-bottom: 1px solid #f1f5f9; display: flex; align-items: center; gap: 8px; font-size: 0.95rem; color: #334155; }
+    .item-list li:last-child { border-bottom: none; }
+    .item-list li::before { content: "•"; color: #2563eb; font-weight: bold; }
+    .item-highlight { background: #fef08a; border-radius: 3px; padding: 0 2px; }
+    .no-results { text-align: center; padding: 60px 20px; color: #94a3b8; }
+    .no-results .icon { font-size: 3rem; margin-bottom: 12px; }
+    .add-box-btn { display: block; width: 100%; padding: 16px; border: 2px dashed #cbd5e1; border-radius: 12px; background: none; font-size: 1rem; color: #64748b; cursor: pointer; text-align: center; margin-top: 8px; transition: all 0.2s; }
+    .add-box-btn:hover { border-color: #2563eb; color: #2563eb; background: #eff6ff; }
+    .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.4); z-index: 100; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: white; border-radius: 16px; padding: 28px; width: 100%; max-width: 480px; margin: 16px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); }
+    .modal h2 { margin-bottom: 20px; color: #1e293b; }
+    .modal label { display: block; font-size: 0.85rem; font-weight: 600; color: #475569; margin-bottom: 6px; }
+    .modal input, .modal select, .modal textarea { width: 100%; padding: 10px 14px; border: 2px solid #e2e8f0; border-radius: 8px; font-size: 0.95rem; margin-bottom: 16px; outline: none; font-family: inherit; }
+    .modal input:focus, .modal select:focus, .modal textarea:focus { border-color: #2563eb; }
+    .modal textarea { resize: vertical; min-height: 100px; }
+    .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
+    .btn { padding: 10px 24px; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; border: none; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; }
+    .btn-primary { background: #2563eb; color: white; }
+    .btn-secondary { background: #f1f5f9; color: #475569; }
+    @media (max-width: 600px) { .search-bar { flex-direction: column; } .stats { gap: 8px; } }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📦 Moving Box Finder</h1>
+    <p>Search your boxes and find what you packed</p>
+  </header>
+
+  <div class="container">
+    <div class="search-bar">
+      <input type="text" id="searchInput" placeholder="Search items across all boxes..." oninput="render()">
+      <select id="roomFilter" onchange="render()">
+        <option value="">All Rooms</option>
+      </select>
+    </div>
+
+    <div class="stats">
+      <div class="stat-card"><div class="num" id="statBoxes">0</div><div class="label">Total Boxes</div></div>
+      <div class="stat-card"><div class="num" id="statItems">0</div><div class="label">Total Items</div></div>
+      <div class="stat-card"><div class="num" id="statResults">0</div><div class="label">Boxes Shown</div></div>
+    </div>
+
+    <div id="resultsInfo" class="results-info"></div>
+    <div id="boxList"></div>
+    <button class="add-box-btn" onclick="openModal()">+ Add New Box</button>
+  </div>
+
+  <div class="modal-overlay" id="modalOverlay" onclick="closeModal(event)">
+    <div class="modal">
+      <h2>Add New Box</h2>
+      <label>Box Name *</label>
+      <input type="text" id="modalName" placeholder="e.g. Box 12, Kitchen Stuff...">
+      <label>Room</label>
+      <input type="text" id="modalRoom" placeholder="e.g. Kitchen, Bedroom, Living Room...">
+      <label>Items (one per line) *</label>
+      <textarea id="modalItems" placeholder="Plates&#10;Coffee mugs&#10;Cutting board"></textarea>
+      <div class="modal-actions">
+        <button class="btn btn-secondary" onclick="document.getElementById('modalOverlay').classList.remove('active')">Cancel</button>
+        <button class="btn btn-primary" onclick="addBox()">Add Box</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    var STORAGE_KEY = 'movingBoxes';
+    var ROOM_ICONS = { kitchen:'🍳', bedroom:'🛏️', bathroom:'🚿', 'living room':'🛋️', office:'💻', garage:'🔧', dining:'🍽️', kids:'🧸', default:'📦' };
+
+    function getRoomIcon(room) {
+      var r = (room || '').toLowerCase();
+      var keys = Object.keys(ROOM_ICONS);
+      for (var i = 0; i < keys.length; i++) {
+        if (r.includes(keys[i])) return ROOM_ICONS[keys[i]];
+      }
+      return ROOM_ICONS.default;
+    }
+
+    function loadBoxes() {
+      try {
+        var stored = localStorage.getItem(STORAGE_KEY);
+        return stored ? JSON.parse(stored) : getDefaultBoxes();
+      } catch(e) { return getDefaultBoxes(); }
+    }
+
+    function saveBoxes(boxes) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(boxes));
+    }
+
+    function getDefaultBoxes() {
+      return [
+        { id: 1, name: 'Box 1 — Kitchen', room: 'Kitchen', items: ['Coffee maker', 'Mugs (set of 6)', 'Cutting boards', 'Spice rack', 'Dish soap & sponges', 'Mixing bowls'] },
+        { id: 2, name: 'Box 2 — Bedroom', room: 'Bedroom', items: ['Bed linens & pillowcases', 'Alarm clock', 'Bedside lamp', 'Books (3)', 'Phone charger', 'Pajamas'] },
+        { id: 3, name: 'Box 3 — Living Room', room: 'Living Room', items: ['Remote controls', 'HDMI cables', 'Photo frames', 'Throw blanket', 'Candles', 'Board games'] },
+        { id: 4, name: 'Box 4 — Office', room: 'Office', items: ['Laptop charger', 'Mouse & keyboard', 'Notebooks & pens', 'Printer paper', 'Desk organizer', 'External hard drive'] },
+        { id: 5, name: 'Box 5 — Bathroom', room: 'Bathroom', items: ['Towels (4)', 'Toiletries bag', 'Hair dryer', 'First aid kit', 'Toilet paper (12-pack)', 'Cleaning supplies'] },
+        { id: 6, name: 'Box 6 — Miscellaneous', room: '', items: ['Tools (hammer, screwdrivers)', 'Extension cords', 'Light bulbs', 'Batteries', 'Tape & scissors', 'Zip-lock bags'] }
+      ];
+    }
+
+    function highlight(text, query) {
+      if (!query) return text;
+      var re = new RegExp('(' + query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') + ')', 'gi');
+      return text.replace(re, '<span class="item-highlight">$1</span>');
+    }
+
+    var openBoxes = {};
+
+    function render() {
+      var query = document.getElementById('searchInput').value.trim().toLowerCase();
+      var roomFilter = document.getElementById('roomFilter').value;
+      var boxes = loadBoxes();
+
+      var filtered = boxes.slice();
+      if (roomFilter) filtered = filtered.filter(function(b) { return b.room === roomFilter; });
+      if (query) {
+        filtered = filtered.filter(function(b) {
+          return b.name.toLowerCase().includes(query) ||
+            (b.room || '').toLowerCase().includes(query) ||
+            b.items.some(function(i) { return i.toLowerCase().includes(query); });
+        });
+      }
+
+      var totalItems = boxes.reduce(function(s, b) { return s + b.items.length; }, 0);
+      document.getElementById('statBoxes').textContent = boxes.length;
+      document.getElementById('statItems').textContent = totalItems;
+      document.getElementById('statResults').textContent = filtered.length;
+
+      var rooms = boxes.map(function(b) { return b.room; }).filter(Boolean);
+      rooms = rooms.filter(function(v, i, a) { return a.indexOf(v) === i; }).sort();
+      var sel = document.getElementById('roomFilter');
+      var curVal = sel.value;
+      sel.innerHTML = '<option value="">All Rooms</option>' + rooms.map(function(r) {
+        return '<option value="' + r + '"' + (r === curVal ? ' selected' : '') + '>' + r + '</option>';
+      }).join('');
+
+      var info = document.getElementById('resultsInfo');
+      if (query) {
+        info.textContent = 'Found ' + filtered.length + ' box' + (filtered.length !== 1 ? 'es' : '') + ' matching "' + query + '"';
+      } else {
+        info.textContent = '';
+      }
+
+      var list = document.getElementById('boxList');
+      if (!filtered.length) {
+        list.innerHTML = '<div class="no-results"><div class="icon">🔍</div><p>No boxes found matching your search.</p></div>';
+        return;
+      }
+
+      var autoOpen = query.length > 0;
+      list.innerHTML = filtered.map(function(box) {
+        var isOpen = autoOpen || openBoxes[box.id];
+        var matchItems = query ? box.items.filter(function(i) { return i.toLowerCase().includes(query); }) : box.items;
+        var showItems = query ? matchItems : box.items;
+        var icon = getRoomIcon(box.room);
+        var roomHtml = box.room ? '<div class="box-room">' + highlight(box.room, query) + '</div>' : '';
+        var extraHtml = (query && matchItems.length < box.items.length)
+          ? '<li style="color:#94a3b8;font-style:italic">... and ' + (box.items.length - matchItems.length) + ' more items</li>'
+          : '';
+        var itemsHtml = isOpen
+          ? '<div class="box-items"><ul class="item-list">' +
+            showItems.map(function(item) { return '<li>' + highlight(item, query) + '</li>'; }).join('') +
+            extraHtml + '</ul></div>'
+          : '';
+        return '<div class="box-card">' +
+          '<div class="box-header" onclick="toggleBox(' + box.id + ')">' +
+          '<div class="box-title"><span class="box-icon">' + icon + '</span>' +
+          '<div><div class="box-name">' + highlight(box.name, query) + '</div>' + roomHtml + '</div></div>' +
+          '<span class="box-badge">' + box.items.length + ' items ' + (isOpen ? '▲' : '▼') + '</span>' +
+          '</div>' + itemsHtml + '</div>';
+      }).join('');
+    }
+
+    function toggleBox(id) {
+      openBoxes[id] = !openBoxes[id];
+      render();
+    }
+
+    function openModal() {
+      document.getElementById('modalOverlay').classList.add('active');
+    }
+
+    function closeModal(e) {
+      if (e.target === document.getElementById('modalOverlay')) {
+        document.getElementById('modalOverlay').classList.remove('active');
+      }
+    }
+
+    function addBox() {
+      var name = document.getElementById('modalName').value.trim();
+      var room = document.getElementById('modalRoom').value.trim();
+      var itemsRaw = document.getElementById('modalItems').value.trim();
+      if (!name || !itemsRaw) { alert('Please fill in the box name and at least one item.'); return; }
+      var items = itemsRaw.split('\n').map(function(i) { return i.trim(); }).filter(Boolean);
+      var boxes = loadBoxes();
+      var id = Date.now();
+      boxes.push({ id: id, name: name, room: room, items: items });
+      saveBoxes(boxes);
+      document.getElementById('modalOverlay').classList.remove('active');
+      document.getElementById('modalName').value = '';
+      document.getElementById('modalRoom').value = '';
+      document.getElementById('modalItems').value = '';
+      render();
+    }
+
+    render();
+  </script>
+</body>
+</html>
