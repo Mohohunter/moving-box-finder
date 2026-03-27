@@ -3,35 +3,264 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Moving Box Finder</title>
+<title>📦 Moving Box Finder</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/7.0.0/fuse.min.js"></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:#f0f2f5;color:#1a1a2e;min-height:100vh}.header{background:linear-gradient(135deg,#1a1a2e,#16213e);color:#fff;padding:20px 16px 16px;text-align:center}.header h1{font-size:1.5rem;font-weight:700;margin-bottom:4px}.header p{font-size:.85rem;opacity:.7}.controls{background:#fff;padding:12px 16px;border-bottom:1px solid #e5e7eb;position:sticky;top:0;z-index:10;box-shadow:0 2px 8px rgba(0,0,0,.08)}.search-wrap{position:relative;margin-bottom:10px}.search-wrap input{width:100%;padding:10px 14px 10px 40px;font-size:1rem;border:2px solid #e5e7eb;border-radius:10px;outline:none}.search-icon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:#9ca3af}.filters{display:flex;gap:6px;flex-wrap:wrap}.filter-btn{padding:5px 12px;border-radius:20px;border:2px solid transparent;font-size:.78rem;font-weight:600;cursor:pointer;background:#f3f4f6;color:#4b5563}.filter-btn.active{background:#1a1a2e;color:#fff;border-color:#1a1a2e}.filter-btn.f-storage.active{background:#1d4ed8;border-color:#1d4ed8}.filter-btn.f-shop.active{background:#c2410c;border-color:#c2410c}.filter-btn.f-fragile.active{background:#dc2626;border-color:#dc2626}.filter-btn.f-priority.active{background:#059669;border-color:#059669}.filter-btn.f-caution.active{background:#d97706;border-color:#d97706}.results-bar{padding:10px 16px 4px;font-size:.82rem;color:#6b7280;font-weight:500}.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;padding:8px 16px 24px}.card{background:#fff;border-radius:12px;padding:14px;box-shadow:0 1px 4px rgba(0,0,0,.08);border:1px solid #f0f0f0}.card.priority1{border-left:4px solid #059669}.card.caution{border-left:4px solid #d97706}.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:8px;gap:8px}.box-id{font-size:1.25rem;font-weight:800;color:#1a1a2e}.badges{display:flex;flex-wrap:wrap;gap:4px;justify-content:flex-end}.badge{padding:2px 8px;border-radius:12px;font-size:.7rem;font-weight:700;text-transform:uppercase;white-space:nowrap}.badge-storage{background:#dbeafe;color:#1d4ed8}.badge-shop{background:#ffedd5;color:#c2410c}.badge-fragile{background:#fee2e2;color:#dc2626}.badge-priority{background:#d1fae5;color:#059669}.badge-caution{background:#fef3c7;color:#d97706}.card-category{font-size:.8rem;font-weight:600;color:#6b7280;margin-bottom:6px}.card-contents{font-size:.85rem;color:#374151;line-height:1.5}.card-notes{font-size:.78rem;color:#9ca3af;margin-top:6px;font-style:italic}.no-results{text-align:center;padding:60px 20px;color:#9ca3af}@media(max-width:600px){.grid{grid-template-columns:1fr}}
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+
+  .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 20px 16px 16px; text-align: center; }
+  .header h1 { font-size: 1.5rem; font-weight: 700; margin-bottom: 4px; }
+  .header p { font-size: 0.85rem; opacity: 0.7; }
+
+  .controls { background: white; padding: 12px 16px; border-bottom: 1px solid #e5e7eb; position: sticky; top: 0; z-index: 10; box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+
+  .search-wrap { position: relative; margin-bottom: 10px; }
+  .search-wrap input {
+    width: 100%; padding: 10px 14px 10px 40px; font-size: 1rem;
+    border: 2px solid #e5e7eb; border-radius: 10px; outline: none;
+    transition: border-color 0.2s;
+  }
+  .search-wrap input:focus { border-color: #4f46e5; }
+  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); font-size: 1rem; color: #9ca3af; }
+
+  .filters { display: flex; gap: 6px; flex-wrap: wrap; }
+  .filter-btn {
+    padding: 5px 12px; border-radius: 20px; border: 2px solid transparent;
+    font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: all 0.15s;
+    background: #f3f4f6; color: #4b5563;
+  }
+  .filter-btn:hover { background: #e5e7eb; }
+  .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+  .filter-btn.f-storage.active { background: #1d4ed8; border-color: #1d4ed8; }
+  .filter-btn.f-shop.active { background: #c2410c; border-color: #c2410c; }
+  .filter-btn.f-fragile.active { background: #dc2626; border-color: #dc2626; }
+  .filter-btn.f-priority.active { background: #059669; border-color: #059669; }
+  .filter-btn.f-caution.active { background: #d97706; border-color: #d97706; }
+
+  .results-bar { padding: 10px 16px 4px; font-size: 0.82rem; color: #6b7280; font-weight: 500; }
+
+  .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; padding: 8px 16px 24px; }
+
+  .card {
+    background: white; border-radius: 12px; padding: 14px;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.08); border: 1px solid #f0f0f0;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+  .card:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.12); }
+  .card.priority1 { border-left: 4px solid #059669; }
+  .card.caution { border-left: 4px solid #d97706; }
+
+  .card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; gap: 8px; }
+  .box-id { font-size: 1.25rem; font-weight: 800; color: #1a1a2e; letter-spacing: -0.5px; }
+  .badges { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; }
+
+  .badge {
+    padding: 2px 8px; border-radius: 12px; font-size: 0.7rem; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.3px; white-space: nowrap;
+  }
+  .badge-storage { background: #dbeafe; color: #1d4ed8; }
+  .badge-shop { background: #ffedd5; color: #c2410c; }
+  .badge-fragile { background: #fee2e2; color: #dc2626; }
+  .badge-priority1 { background: #d1fae5; color: #059669; }
+  .badge-priority2 { background: #f3f4f6; color: #6b7280; }
+  .badge-priority3 { background: #f9fafb; color: #9ca3af; }
+  .badge-caution { background: #fef3c7; color: #d97706; }
+  .badge-room { background: #f3f4f6; color: #6b7280; font-weight: 600; }
+
+  .card-category { font-size: 0.8rem; font-weight: 600; color: #6b7280; margin-bottom: 6px; }
+  .card-contents { font-size: 0.85rem; color: #374151; line-height: 1.5; }
+  .card-notes { font-size: 0.78rem; color: #9ca3af; margin-top: 6px; font-style: italic; }
+
+  .no-results { text-align: center; padding: 60px 20px; color: #9ca3af; }
+  .no-results .emoji { font-size: 3rem; display: block; margin-bottom: 12px; }
+  .no-results p { font-size: 1rem; }
+
+  @media (max-width: 600px) {
+    .grid { grid-template-columns: 1fr; padding: 8px 12px 20px; }
+    .header h1 { font-size: 1.3rem; }
+  }
 </style>
 </head>
 <body>
-<div class="header"><h1>📦 Moving Box Finder</h1><p>Search 69 boxes · Storage Unit &amp; Papa's Shop</p></div>
+
+<div class="header">
+  <h1>📦 Moving Box Finder</h1>
+  <p>Search 69 boxes · Storage Unit &amp; Papa's Shop</p>
+</div>
+
 <div class="controls">
-<div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="si" placeholder="Search by box ID, item, or category…" autocomplete="off"></div>
-<div class="filters">
-<button class="filter-btn active" data-f="all">All (69)</button>
-<button class="filter-btn f-storage" data-f="storage">🏢 Storage Unit</button>
-<button class="filter-btn f-shop" data-f="shop">🔧 Papa's Shop</button>
-<button class="filter-btn f-fragile" data-f="fragile">🔴 Fragile</button>
-<button class="filter-btn f-priority" data-f="priority">⭐ Open First</button>
-<button class="filter-btn f-caution" data-f="caution">⚠️ Caution</button>
-</div></div>
-<div class="results-bar" id="rb"></div>
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" id="searchInput" placeholder="Search by box, item, category…" autocomplete="off" autofocus>
+  </div>
+  <div class="filters">
+    <button class="filter-btn active" data-filter="all">All <span id="count-all"></span></button>
+    <button class="filter-btn f-storage" data-filter="storage">🏢 Storage</button>
+    <button class="filter-btn f-shop" data-filter="shop">🔧 Papa's Shop</button>
+    <button class="filter-btn f-fragile" data-filter="fragile">🔴 Fragile</button>
+    <button class="filter-btn f-priority" data-filter="priority">⭐ Priority 1</button>
+    <button class="filter-btn f-caution" data-filter="caution">⚠️ Caution</button>
+  </div>
+</div>
+
+<div class="results-bar" id="resultsBar">Loading…</div>
 <div class="grid" id="grid"></div>
+
 <script>
-const B=[{i:"BA-01",r:"Bathroom",f:0,p:2,c:"Linens",s:"Towels",n:"",w:0,d:"Storage Unit"},{i:"BR-01",r:"Bailey's Room",f:1,p:2,c:"Toys/Decor/Crafts",s:"Bags; picture decor; craft supplies; LOL dolls; Polly Pockets; light-up letter board",n:"",w:0,d:"Storage Unit"},{i:"BR-02",r:"Bailey's Room",f:1,p:2,c:"Keepsakes/Electronics",s:"Picture decor; keepsake box; mini projector; movie script binder; cooking set",n:"",w:0,d:"Storage Unit"},{i:"BR-03",r:"Bailey's Room",f:0,p:2,c:"Books",s:"Chapter books",n:"",w:0,d:"Storage Unit"},{i:"BR-04",r:"Bailey's Room",f:0,p:2,c:"Books",s:"Chapter books",n:"",w:0,d:"Storage Unit"},{i:"BR-05",r:"Bailey's Room",f:0,p:2,c:"Toys",s:"Barbie house",n:"",w:0,d:"Storage Unit"},{i:"BR-06",r:"Bailey's Room",f:0,p:2,c:"Books",s:"Books",n:"",w:0,d:"Storage Unit"},{i:"BR-07",r:"Bailey's Room",f:0,p:2,c:"Books",s:"Books",n:"",w:0,d:"Storage Unit"},{i:"BR-08",r:"Bailey's Room",f:1,p:1,c:"Lighting",s:"Lamp",n:"Open first",w:0,d:"Storage Unit"},{i:"BR-09",r:"Bailey's Room",f:0,p:2,c:"Toys",s:"Stuffed animals",n:"",w:0,d:"Storage Unit"},{i:"BR-10",r:"Bailey's Room",f:1,p:2,c:"Toys/Misc",s:"Shelf; American Girl stroller; walkie talkies; Tamagotchi; Great Wolf wand; Legos; flashlight; microphone; DVDs",n:"",w:0,d:"Storage Unit"},{i:"BR-11",r:"Bailey's Room",f:0,p:2,c:"Toys",s:"American Girl dolls",n:"",w:0,d:"Storage Unit"},{i:"BR-12",r:"Bailey's Room",f:1,p:2,c:"Toys/Accessories",s:"American Girl dog house; blue Barbie car; Barbie accessory bin; Polaroid camera",n:"",w:0,d:"Storage Unit"},{i:"BR-13",r:"Bailey's Room",f:0,p:2,c:"Toys/Bedding",s:"Pink crossbody bag; extra bedding; American Girl motorcycle; Barbie camper",n:"",w:0,d:"Storage Unit"},{i:"BR-14",r:"Bailey's Room",f:1,p:2,c:"Toys/Decor",s:"American Girl ice cream truck; wall mirror",n:"",w:0,d:"Storage Unit"},{i:"BR-15",r:"Bailey's Room",f:1,p:2,c:"Accessories/Decor",s:"Hats; eyeglasses; Paris light; Annie poster; Millennium Falcon 3D print",n:"",w:0,d:"Storage Unit"},{i:"BR-16",r:"Bailey's Room",f:1,p:2,c:"Toys/Music",s:"American Girl salon; drum",n:"",w:0,d:"Storage Unit"},{i:"CR-01",r:"Cole's Room",f:0,p:2,c:"Games/Puzzles",s:"Throw Throw Burrito; Harry Potter Deck Building; Pixar puzzle; Mantis; Coup; Sleeping Queens; escape room packs",n:"",w:0,d:"Storage Unit"},{i:"CR-02",r:"Cole's Room",f:0,p:2,c:"Board Games",s:"Clue games (multiple); Monopoly games (multiple); Dude Perfect Tic-Tac-Toe",n:"",w:0,d:"Storage Unit"},{i:"CR-03",r:"Cole's Room",f:0,p:2,c:"Board Games/Puzzles",s:"Junior Detective; Minecraft game; Gravity Maze; Concept Kids; Headbands; Stratego; Walking Dead; stuffed animals",n:"",w:0,d:"Storage Unit"},{i:"CR-04",r:"Cole's Room",f:0,p:3,c:"Toys/Games",s:"Toy guns; Nathan MacKinnon figurine; bungee table hockey",n:"",w:0,d:"Storage Unit"},{i:"CR-05",r:"Cole's Room",f:0,p:1,c:"Favorite Board Games",s:"Wavelength; Labyrinth; Disney Trivia; Catan; Ticket to Ride; Resistance; Qwirkle",n:"Open first",w:0,d:"Storage Unit"},{i:"CR-06",r:"Cole's Room",f:1,p:2,c:"Hockey Keepsakes",s:"Keepsake books; hockey memories; hockey pucks; hockey decor",n:"",w:0,d:"Storage Unit"},{i:"CR-07",r:"Cole's Room",f:0,p:2,c:"Board Games",s:"Pictionary; Chess; Ringer; Splendor; Taco Cat; Taboo; Element; Jenga; Wonder Woman",n:"",w:0,d:"Storage Unit"},{i:"CR-08",r:"Cole's Room",f:0,p:2,c:"Board Games/Costume",s:"Escape Detention; Trekking the World; Mycelia; Battleship; dinosaur costume; giant egg",n:"",w:0,d:"Storage Unit"},{i:"CR-09",r:"Cole's Room",f:0,p:2,c:"Toys/Decor",s:"Dude Perfect board game; Pokemon items; laser tag guns; gumball machine; stuffed animals; Bears hockey decor",n:"",w:0,d:"Storage Unit"},{i:"CR-10",r:"Cole's Room",f:0,p:2,c:"Books",s:"Kids books",n:"",w:0,d:"Storage Unit"},{i:"CR-11",r:"Cole's Room",f:0,p:2,c:"STEM/Toys",s:"Mark Rober stuff",n:"",w:0,d:"Storage Unit"},{i:"G-01",r:"Garage",f:0,p:3,c:"Lawn/Chemicals",s:"Weed killer; rust remover; insect killer; adhesive spray; tile caulk; anti-bird device; new deadbolt; flower pots; mice killer; garden seeds",n:"Keep upright",w:1,d:"Papa's Shop"},{i:"G-02",r:"Garage",f:0,p:3,c:"Christmas Decor",s:"Small Christmas tree",n:"",w:0,d:"Papa's Shop"},{i:"G-03",r:"Garage",f:0,p:3,c:"Automotive/Flammable",s:"Motorcycle oil; Armor All; fuel stabilizer; 5W30 oil; brake fluid; WD-40; Goo Gone; wood glue; butane; chain lube",n:"Keep upright",w:1,d:"Papa's Shop"},{i:"G-04",r:"Garage",f:0,p:3,c:"Tools/Firework Parts",s:"Firework mortars; mortar tube; steering wheel lock; fish tape; DeWalt drill chargers",n:"Keep upright",w:1,d:"Papa's Shop"},{i:"G-05",r:"Garage",f:0,p:3,c:"Rock Climbing Gear",s:"Rock climbing gear",n:"",w:0,d:"Papa's Shop"},{i:"G-06",r:"Garage",f:0,p:3,c:"Adhesives/Small Parts",s:"Gorilla Glue; duct tape; butane; soldering iron; baby-proofing items; DeWalt battery end caps",n:"Keep upright",w:1,d:"Papa's Shop"},{i:"G-07",r:"Garage",f:0,p:3,c:"Sports/Outdoor",s:"Frisbee; soccer balls; footballs; water balloons; baseball bat; kite",n:"",w:0,d:"Papa's Shop"},{i:"G-08",r:"Garage",f:0,p:3,c:"Hockey Gear",s:"Hockey pucks; hockey balls; hockey breezers; hockey gloves; chest pad",n:"",w:0,d:"Papa's Shop"},{i:"G-09",r:"Garage",f:0,p:3,c:"Hockey Gear",s:"Hockey ice skates; hockey rollerblades; Cole's stick handling trainer",n:"",w:0,d:"Papa's Shop"},{i:"H-01",r:"Household",f:1,p:2,c:"Photos/Wall Decor",s:"Photos; wall decor",n:"",w:0,d:"Storage Unit"},{i:"H-02",r:"Household",f:0,p:2,c:"Decor/Chalkboards",s:"House decor; chalkboards",n:"",w:0,d:"Storage Unit"},{i:"H-03",r:"Household",f:0,p:2,c:"Wall Decor",s:"Map of the world; In This House sign; Cole gaming decor",n:"",w:0,d:"Storage Unit"},{i:"H-04",r:"Household",f:1,p:2,c:"Photos/Decor",s:"Photos; decor",n:"",w:0,d:"Storage Unit"},{i:"H-05",r:"Household",f:1,p:2,c:"Decor/Photos",s:"House decor; photos",n:"",w:0,d:"Storage Unit"},{i:"K-01",r:"Kitchen",f:1,p:2,c:"Linens/Dishware",s:"Bamboo tea towels; tea saucers; white tea towel napkins",n:"",w:0,d:"Storage Unit"},{i:"K-02",r:"Kitchen",f:1,p:1,c:"Drinkware/Dishware",s:"Coffee cups; tea towels; tea cups; tea dishes",n:"Open first",w:0,d:"Storage Unit"},{i:"K-03",r:"Kitchen",f:1,p:2,c:"Coffee/Appliance",s:"Coffee carafes; coffee items; jerky dehydrator",n:"",w:0,d:"Storage Unit"},{i:"K-04",r:"Kitchen",f:1,p:2,c:"Appliances/Serveware",s:"Jerky dehydrator trays; popcorn makers; chips bowl; flat serving trays; tea towels",n:"",w:0,d:"Storage Unit"},{i:"K-05",r:"Kitchen",f:1,p:1,c:"Serveware/Utensils",s:"Salad bowl; salad utensils; cheese grater; lemonade pitcher; salsa bowls; serving trays",n:"Open first",w:0,d:"Storage Unit"},{i:"K-06",r:"Kitchen",f:1,p:1,c:"Drinkware",s:"Coffee cups; water bottles",n:"Open first",w:0,d:"Storage Unit"},{i:"K-07",r:"Kitchen",f:1,p:2,c:"Glassware/Linens",s:"Glass vases; glass jars; aprons",n:"",w:0,d:"Storage Unit"},{i:"K-08",r:"Kitchen",f:1,p:2,c:"Kitchenware/Linens",s:"Kitchen canisters; hot pads; hand towels",n:"",w:0,d:"Storage Unit"},{i:"K-09",r:"Kitchen",f:1,p:1,c:"Drinkware",s:"Coffee cups",n:"Open first",w:0,d:"Storage Unit"},{i:"K-10",r:"Kitchen",f:1,p:2,c:"Kitchenware",s:"Fondue pots; large water bottle",n:"",w:0,d:"Storage Unit"},{i:"K-11",r:"Kitchen",f:1,p:2,c:"Seasonal/Drinkware",s:"Christmas cupcake stand; serving platter; martini glasses; margarita glasses",n:"",w:0,d:"Storage Unit"},{i:"K-12",r:"Kitchen",f:1,p:2,c:"Dishware/Appliance",s:"Serving platter; small ramekins; hand mixer",n:"",w:0,d:"Storage Unit"},{i:"K-13",r:"Kitchen",f:1,p:3,c:"Seasonal",s:"Christmas dishes",n:"",w:0,d:"Storage Unit"},{i:"K-14",r:"Kitchen",f:1,p:2,c:"Kitchenware",s:"Glass jars; juicer",n:"",w:0,d:"Storage Unit"},{i:"K-15",r:"Kitchen",f:1,p:2,c:"Kitchenware",s:"Red candy dish; olive oil pitcher; glass canisters; jars",n:"",w:0,d:"Storage Unit"},{i:"K-16",r:"Kitchen",f:1,p:2,c:"Dishware",s:"Sushi dishes; white ramekins; celebrity dish set; crystal bowl",n:"",w:0,d:"Storage Unit"},{i:"K-17",r:"Kitchen",f:1,p:2,c:"Tea Kettles",s:"Tea kettles; full box of tea kettles",n:"",w:0,d:"Storage Unit"},{i:"K-18",r:"Kitchen",f:1,p:2,c:"Dishware/Serveware",s:"Plastic plates; stone serving bowl; glass vase; bowl holders; nice glasses",n:"",w:0,d:"Storage Unit"},{i:"K-19",r:"Kitchen",f:0,p:2,c:"Small Appliance",s:"Easy-Bake Oven",n:"",w:0,d:"Storage Unit"},{i:"K-20",r:"Kitchen",f:1,p:2,c:"Plasticware/Accessories",s:"Tupperware; straws; lemon juicer; bacon dish; measuring cups; funnels",n:"",w:0,d:"Storage Unit"},{i:"K-21",r:"Kitchen",f:1,p:2,c:"Bakeware",s:"Pizza stone; muffin tins; glass pie dishes; cookie sheets; wire rack; cheesecake pans; cake pans; brownie pans; bread pans",n:"",w:0,d:"Storage Unit"},{i:"K-22",r:"Kitchen",f:0,p:2,c:"Small Appliances",s:"Grill; electric skillet; pasta attachment for KitchenAid",n:"",w:0,d:"Storage Unit"},{i:"K-23",r:"Kitchen",f:1,p:1,c:"Drinkware",s:"Coffee cups; mason jars; glasses",n:"Open first",w:0,d:"Storage Unit"},{i:"K-24",r:"Kitchen",f:1,p:2,c:"Cookware/Appliances",s:"Waffle maker; pots and pans; strainers; apple peeler; enchilada pan; mason jars",n:"",w:0,d:"Storage Unit"},{i:"K-25",r:"Kitchen",f:1,p:1,c:"Plates",s:"Big plates; small plates",n:"Open first",w:0,d:"Storage Unit"},{i:"K-26",r:"Kitchen",f:1,p:1,c:"Bowls/Utensils/Tools",s:"Glasses; ramen bowl; bowls; honey pot; chopsticks; spatulas; whisk; cooking utensils; slicers; tongs; cheese slicer; fondue sticks",n:"Open first",w:0,d:"Storage Unit"},{i:"LR-01",r:"Living Room",f:0,p:2,c:"Linens",s:"Blankets",n:"Large box",w:0,d:"Storage Unit"}];
-const fu=new Fuse(B,{keys:['i','r','c','s','n'],threshold:0.35});
-let af='all',sq='';
-function gf(){let r=sq.trim()?fu.search(sq).map(x=>x.item):[...B];if(af==='storage')r=r.filter(b=>b.d==='Storage Unit');else if(af==='shop')r=r.filter(b=>b.d==="Papa's Shop");else if(af==='fragile')r=r.filter(b=>b.f);else if(af==='priority')r=r.filter(b=>b.p===1);else if(af==='caution')r=r.filter(b=>b.w);return r;}
-function ch(b){const d=b.d==='Storage Unit'?'<span class="badge badge-storage">🏢 Storage</span>':'<span class="badge badge-shop">🔧 Papa\'s Shop</span>';const f=b.f?'<span class="badge badge-fragile">FRAGILE</span>':'';const p=b.p===1?'<span class="badge badge-priority">⭐ Open First</span>':'';const w=b.w?'<span class="badge badge-caution">⚠️ Caution</span>':'';const n=b.n?'<div class="card-notes">'+b.n+'</div>':'';const cl=b.p===1?'card priority1':b.w?'card caution':'card';return '<div class="'+cl+'"><div class="card-header"><div class="box-id">'+b.i+'</div><div class="badges">'+d+p+f+w+'</div></div><div class="card-category">'+b.c+' &middot; <span style="font-weight:400">'+b.r+'</span></div><div class="card-contents">'+b.s+'</div>'+n+'</div>';}
-function render(){const r=gf();document.getElementById('grid').innerHTML=r.length?r.map(ch).join(''):'<div class="no-results" style="grid-column:1/-1"><span style="font-size:3rem;display:block;margin-bottom:12px">🔍</span><p>No boxes match.</p></div>';document.getElementById('rb').textContent=(sq||af!=='all')?'Showing '+r.length+' of '+B.length+' boxes':'All '+B.length+' boxes';}
-document.getElementById('si').addEventListener('input',e=>{sq=e.target.value;render();});
-document.querySelectorAll('.filter-btn').forEach(btn=>{btn.addEventListener('click',()=>{af=btn.dataset.f;document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));btn.classList.add('active');render();});});
+const BOXES = [
+  {id:"BA-01",room:"Bathroom",fragile:false,priority:2,cat:"Linens",contents:"Towels",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-01",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Decor / Crafts",contents:"Bags; picture decor; craft supplies; LOL dolls; Polly Pockets; light-up letter board and letters",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-02",room:"Bailey's Room",fragile:true,priority:2,cat:"Decor / Keepsakes / Electronics",contents:"Picture decor; keepsake box; mini projector and accessories; movie/script binder; cooking set",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-03",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Chapter books",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-04",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Chapter books",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-05",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"Barbie house",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-06",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Books",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-07",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Books",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-08",room:"Bailey's Room",fragile:true,priority:1,cat:"Lighting",contents:"Lamp",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"BR-09",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"Stuffed animals",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-10",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Misc",contents:"Shelf; American Girl doll stroller; walkie talkies; snake (3D print); Tamagotchi; Great Wolf Lodge wand; American Girl doll locker; two heart Legos; flashlight; microphone; 3 DVDs; exercise ball",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-11",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"American Girl dolls",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-12",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Accessories",contents:"American Girl doll dog house; blue Barbie car; Barbie accessory bin; Polaroid camera",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-13",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys / Bedding / Accessories",contents:"Pink crossbody bag; extra bedding; American Girl doll motorcycle; Barbie camper",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-14",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Decor",contents:"American Girl doll ice cream truck; wall mirror",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-15",room:"Bailey's Room",fragile:true,priority:2,cat:"Accessories / Decor / Misc",contents:"Hats; eyeglasses; Paris light; Annie poster; bedtime stories script; Millennium Falcon 3D print",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"BR-16",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Music",contents:"American Girl doll salon; drum",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-01",room:"Cole's Room",fragile:false,priority:2,cat:"Games / Puzzles",contents:"Throw Throw Burrito; Harry Potter Deck Building Game; Pixar puzzle; Mantis; Coup; Sleeping Queens; escape room packs; Harry Potter playing card set; Salem",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-02",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games",contents:"Clue games (multiple); Monopoly games (multiple); Dude Perfect Tic-Tac-Toe",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-03",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games / Puzzles / Toys",contents:"Junior Detective; Minecraft game; Gravity Maze; Concept Kids; Headbands; Stratego; The Walking Dead game; Bernie Avalanche stuffed animal",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-04",room:"Cole's Room",fragile:false,priority:3,cat:"Toys / Games",contents:"Toy guns bullets and cars; Nathan MacKinnon figurine; bungee table hockey puck game",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-05",room:"Cole's Room",fragile:false,priority:1,cat:"Favorite Board Games",contents:"Wavelength; Labyrinth; Disney Trivia; Catan; Ticket to Ride; Resistance; Qwirkle",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"CR-06",room:"Cole's Room",fragile:true,priority:2,cat:"Hockey Keepsakes",contents:"Keepsake books; hockey memories; hockey pucks; hockey decor",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-07",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games",contents:"Pictionary; Chess; Ringer; Splendor; Taco Cat; Taboo; Element; Jenga; Wonder Woman",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-08",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games / Costume / Decor",contents:"Escape Detention; Trekking the World; Mycelia; Battleship; dinosaur costume; giant egg",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-09",room:"Cole's Room",fragile:false,priority:2,cat:"Toys / Decor",contents:"Dude Perfect board game; Pokemon items; laser tag guns; gumball machine; stuffed animals; Bears hockey wall decor",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-10",room:"Cole's Room",fragile:false,priority:2,cat:"Books",contents:"Kids books",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"CR-11",room:"Cole's Room",fragile:false,priority:2,cat:"STEM / Toys",contents:"Mark Rober stuff",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"G-01",room:"Garage",fragile:false,priority:3,cat:"Lawn / Yard / Chemicals",contents:"Weed killer; rust stain remover; diatomaceous earth insect killer; adhesive spray; ceramic tile caulk; anti-bird device; new deadbolt; flower pots; potting mix; mice killer; survival garden seeds",notes:"Keep upright",caution:true,dest:"Papa's Shop"},
+  {id:"G-02",room:"Garage",fragile:false,priority:3,cat:"Christmas Decor",contents:"Small Christmas tree",notes:"",caution:false,dest:"Papa's Shop"},
+  {id:"G-03",room:"Garage",fragile:false,priority:3,cat:"Automotive / Sprays / Flammable",contents:"10W40 motorcycle oil; Armor All; STA-BIL fuel stabilizer; 5W30 oil; DOT 4 brake fluid; WD-40; Goo Gone; wood glue; electrical cleaner; butane; bicycle chain lube",notes:"Keep upright",caution:true,dest:"Papa's Shop"},
+  {id:"G-04",room:"Garage",fragile:false,priority:3,cat:"Tools / Firework Parts",contents:"Firework mortars; mortar tube; steering wheel lock; fish tape; DeWalt drill battery chargers (2)",notes:"Keep upright",caution:true,dest:"Papa's Shop"},
+  {id:"G-05",room:"Garage",fragile:false,priority:3,cat:"Rock Climbing Gear",contents:"Rock climbing gear",notes:"",caution:false,dest:"Papa's Shop"},
+  {id:"G-06",room:"Garage",fragile:false,priority:3,cat:"Adhesives / Tools / Small Parts",contents:"Gorilla Glue; duct tape; butane; soldering iron; baby-proofing items; DeWalt battery end caps",notes:"Keep upright",caution:true,dest:"Papa's Shop"},
+  {id:"G-07",room:"Garage",fragile:false,priority:3,cat:"Sports / Outdoor Toys",contents:"Frisbee; soccer balls; footballs; water balloons; baseball bat; kite",notes:"",caution:false,dest:"Papa's Shop"},
+  {id:"G-08",room:"Garage",fragile:false,priority:3,cat:"Hockey Gear",contents:"Hockey pucks; hockey balls; hockey breezers; hockey gloves; chest pad",notes:"",caution:false,dest:"Papa's Shop"},
+  {id:"G-09",room:"Garage",fragile:false,priority:3,cat:"Hockey Gear",contents:"Hockey ice skates; hockey rollerblades; Cole's stick handling trainer",notes:"",caution:false,dest:"Papa's Shop"},
+  {id:"H-01",room:"Household",fragile:true,priority:2,cat:"Photos / Wall Decor",contents:"Photos; wall decor",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"H-02",room:"Household",fragile:false,priority:2,cat:"Decor / Chalkboards",contents:"House decor; chalkboards",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"H-03",room:"Household",fragile:false,priority:2,cat:"Wall Decor",contents:"Map of the world; In This House sign; Cole's gaming decor picture",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"H-04",room:"Household",fragile:true,priority:2,cat:"Photos / Decor",contents:"Photos; decor",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"H-05",room:"Household",fragile:true,priority:2,cat:"Decor / Photos",contents:"House decor; photos",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-01",room:"Kitchen",fragile:true,priority:2,cat:"Linens / Dishware",contents:"Bamboo tea towels; tea saucers; white tea towel napkins",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-02",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware / Dishware",contents:"Coffee cups; tea towels; tea cups; tea dishes",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"K-03",room:"Kitchen",fragile:true,priority:2,cat:"Coffee / Appliance",contents:"Coffee carafes; miscellaneous coffee items; jerky dehydrator",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-04",room:"Kitchen",fragile:true,priority:2,cat:"Appliances / Serveware",contents:"Jerky dehydrator trays; popcorn makers; large plastic chips bowl; flat serving trays; tea towels",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-05",room:"Kitchen",fragile:true,priority:1,cat:"Serveware / Utensils",contents:"Salad bowl; salad serving utensils; cheese grater; lemonade pitcher; small salsa bowls; serving trays",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"K-06",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups; water bottles",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"K-07",room:"Kitchen",fragile:true,priority:2,cat:"Glassware / Linens",contents:"Glass vases; glass jars; aprons",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-08",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware / Linens",contents:"Kitchen canisters; hot pads; hand towels",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-09",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"K-10",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Fondue pots; large water bottle; high carrier",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-11",room:"Kitchen",fragile:true,priority:2,cat:"Seasonal / Drinkware",contents:"Christmas cupcake stand; serving platter; martini glasses; margarita glasses",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-12",room:"Kitchen",fragile:true,priority:2,cat:"Dishware / Appliance",contents:"Serving platter; food sign; small ramekins; hand mixer",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-13",room:"Kitchen",fragile:true,priority:3,cat:"Seasonal",contents:"Christmas dishes",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-14",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Glass jars; juicer",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-15",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Red candy dish; red olive oil pitcher; glass canisters; jars",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-16",room:"Kitchen",fragile:true,priority:2,cat:"Dishware",contents:"Sushi dishes; white ramekins; white celebrity dish set; crystal bowl",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-17",room:"Kitchen",fragile:true,priority:2,cat:"Tea Kettles",contents:"Tea kettles; full box of tea kettles",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-18",room:"Kitchen",fragile:true,priority:2,cat:"Dishware / Serveware",contents:"Plastic plates; white stone serving bowl; glass vase; microwave bowl holders; nice glasses",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-19",room:"Kitchen",fragile:false,priority:2,cat:"Small Appliance / Toy",contents:"Easy-Bake Oven",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-20",room:"Kitchen",fragile:true,priority:2,cat:"Plasticware / Kitchen Accessories",contents:"Tupperware; straws; lemon juicer; microwave bacon dish; measuring cups; funnels",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-21",room:"Kitchen",fragile:true,priority:2,cat:"Bakeware",contents:"Pizza stone; muffin tins; glass pie dishes; cookie sheets; wire rack; cheesecake pans; cake pans; brownie pans; bread pans",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-22",room:"Kitchen",fragile:false,priority:2,cat:"Small Appliances",contents:"Grill; electric skillet; pasta attachment for KitchenAid",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-23",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups; mason jars; glasses",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"K-24",room:"Kitchen",fragile:true,priority:2,cat:"Cookware / Small Appliances",contents:"Waffle maker; pots and pans with lids; strainers; apple peeler; small enchilada pan; mason jars",notes:"",caution:false,dest:"Storage Unit"},
+  {id:"K-25",room:"Kitchen",fragile:true,priority:1,cat:"Plates",contents:"Big plates; small plates",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"K-26",room:"Kitchen",fragile:true,priority:1,cat:"Bowls / Utensils / Kitchen Tools",contents:"Glasses; ramen bowl; bowls; honey pot; chopsticks; spatulas; big whisk; cooking utensils; apple slicer; pineapple slicer; avocado slicer; tongs; cheese slicer; fondue sticks",notes:"Open first",caution:false,dest:"Storage Unit"},
+  {id:"LR-01",room:"Living Room / Closet",fragile:false,priority:2,cat:"Linens",contents:"Blankets",notes:"Large box",caution:false,dest:"Storage Unit"},
+];
+
+const fuse = new Fuse(BOXES, {
+  keys: ['id','room','cat','contents','notes'],
+  threshold: 0.35,
+  includeScore: true
+});
+
+let activeFilter = 'all';
+let searchQuery = '';
+
+function getFiltered() {
+  let results = searchQuery.trim()
+    ? fuse.search(searchQuery).map(r => r.item)
+    : [...BOXES];
+
+  if (activeFilter === 'storage') results = results.filter(b => b.dest === 'Storage Unit');
+  else if (activeFilter === 'shop') results = results.filter(b => b.dest === "Papa's Shop");
+  else if (activeFilter === 'fragile') results = results.filter(b => b.fragile);
+  else if (activeFilter === 'priority') results = results.filter(b => b.priority === 1);
+  else if (activeFilter === 'caution') results = results.filter(b => b.caution);
+  return results;
+}
+
+function cardHTML(b) {
+  const destBadge = b.dest === 'Storage Unit'
+    ? `<span class="badge badge-storage">🏢 Storage</span>`
+    : `<span class="badge badge-shop">🔧 Papa's Shop</span>`;
+  const fragBadge = b.fragile ? `<span class="badge badge-fragile">FRAGILE</span>` : '';
+  const prioBadge = b.priority === 1
+    ? `<span class="badge badge-priority1">⭐ Open First</span>`
+    : b.priority === 2
+    ? `<span class="badge badge-priority2">P2</span>`
+    : `<span class="badge badge-priority3">P3</span>`;
+  const cautBadge = b.caution ? `<span class="badge badge-caution">⚠️ Caution</span>` : '';
+  const notesTxt = b.notes ? `<div class="card-notes">${b.notes}</div>` : '';
+  const cardClass = b.priority === 1 ? 'card priority1' : (b.caution ? 'card caution' : 'card');
+
+  return `<div class="${cardClass}">
+    <div class="card-header">
+      <div class="box-id">${b.id}</div>
+      <div class="badges">${destBadge}${prioBadge}${fragBadge}${cautBadge}</div>
+    </div>
+    <div class="card-category">${b.cat} · <span style="font-weight:400">${b.room}</span></div>
+    <div class="card-contents">${b.contents}</div>
+    ${notesTxt}
+  </div>`;
+}
+
+function render() {
+  const results = getFiltered();
+  const grid = document.getElementById('grid');
+  const bar = document.getElementById('resultsBar');
+
+  if (results.length === 0) {
+    grid.innerHTML = `<div class="no-results" style="grid-column:1/-1">
+      <span class="emoji">🔍</span>
+      <p>No boxes match. Try a different search or clear the filters.</p>
+    </div>`;
+  } else {
+    grid.innerHTML = results.map(cardHTML).join('');
+  }
+
+  const label = searchQuery || activeFilter !== 'all'
+    ? `Showing ${results.length} of ${BOXES.length} boxes`
+    : `All ${BOXES.length} boxes`;
+  bar.textContent = label;
+}
+
+document.getElementById('searchInput').addEventListener('input', e => {
+  searchQuery = e.target.value;
+  render();
+});
+
+document.querySelectorAll('.filter-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    activeFilter = btn.dataset.filter;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    render();
+  });
+});
+
 render();
 </script>
 </body>
