@@ -37,7 +37,6 @@
   .filter-btn.f-fragile.active { background: #dc2626; border-color: #dc2626; }
   .filter-btn.f-priority.active { background: #059669; border-color: #059669; }
   .filter-btn.f-caution.active { background: #d97706; border-color: #d97706; }
-  .filter-btn.f-farm.active { background: #28a745; border-color: #28a745; }
 
   .results-bar { padding: 10px 16px 4px; font-size: 0.82rem; color: #6b7280; font-weight: 500; }
 
@@ -62,16 +61,12 @@
   }
   .badge-storage { background: #dbeafe; color: #1d4ed8; }
   .badge-shop { background: #ffedd5; color: #c2410c; }
+  .badge-dest { background: #ede9fe; color: #6d28d9; }
   .badge-fragile { background: #fee2e2; color: #dc2626; }
   .badge-priority1 { background: #d1fae5; color: #059669; }
   .badge-priority2 { background: #f3f4f6; color: #6b7280; }
   .badge-priority3 { background: #f9fafb; color: #9ca3af; }
   .badge-caution { background: #fef3c7; color: #d97706; }
-.badge-farm {
-  background: #d4edda;
-  color: #155724;
-  border: 1px solid #c3e6cb;
-}
   .badge-room { background: #f3f4f6; color: #6b7280; font-weight: 600; }
 
   .card-category { font-size: 0.8rem; font-weight: 600; color: #6b7280; margin-bottom: 6px; }
@@ -107,7 +102,6 @@
     <button class="filter-btn f-fragile" data-filter="fragile">🔴 Fragile</button>
     <button class="filter-btn f-priority" data-filter="priority">⭐ Priority 1</button>
     <button class="filter-btn f-caution" data-filter="caution">⚠️ Caution</button>
-    <button class="filter-btn f-farm" data-filter="farm">🌾 Bunting Farm</button>
   </div>
 </div>
 
@@ -116,46 +110,46 @@
 
 <script>
 const BOXES = [
-  {id:"BA-01",room:"Bathroom",fragile:false,priority:2,cat:"Linens",contents:"Towels",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"BA-01",room:"Bathroom",fragile:false,priority:2,cat:"Linens",contents:"Towels",notes:"",caution:false,dest:"Bathroom"},
   {id:"BA-08",room:"Bathroom",fragile:false,priority:2,cat:"First Aid",contents:"Bandages",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"BR-01",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Decor / Crafts",contents:"Bags; picture decor; craft supplies; LOL dolls; Polly Pockets; light-up letter board and letters",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"BR-01",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Decor / Crafts",contents:"Bags; picture decor; craft supplies; LOL dolls; Polly Pockets; light-up letter board and letters",notes:"",caution:false,dest:"Bailey's Room"},
   {id:"BR-02",room:"Bailey's Room",fragile:true,priority:2,cat:"Decor / Keepsakes / Electronics",contents:"Picture decor; keepsake box; mini projector and accessories; movie/script binder; cooking set",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"BR-03",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Chapter books",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-04",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Chapter books",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"BR-03",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Chapter books",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-04",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Chapter books",notes:"",caution:false,dest:"Bailey's Room"},
   {id:"BR-05",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"Barbie house",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"BR-06",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Books",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-07",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Books",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"BR-06",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Books",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-07",room:"Bailey's Room",fragile:false,priority:2,cat:"Books",contents:"Books",notes:"",caution:false,dest:"Bailey's Room"},
   {id:"BR-08",room:"Bailey's Room",fragile:true,priority:1,cat:"Lighting",contents:"Lamp",notes:"Open first",caution:false,dest:"Storage Unit"},
-  {id:"BR-09",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"Stuffed animals",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-10",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Misc",contents:"Shelf; American Girl doll stroller; walkie talkies; snake (3D print); Tamagotchi; Great Wolf Lodge wand; American Girl doll locker; two heart Legos; flashlight; microphone; 3 DVDs; exercise ball; rock paper scissors bots; frisbee cord; LOL doll glasses; seashell; misc knick knacks",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-11",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"American Girl dolls",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-12",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Accessories",contents:"American Girl doll dog house; blue Barbie car; Barbie accessory bin; Polaroid camera; owl pen holder; pink fuzzy onesie; pink swan necklace ramekin; leather purse",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-13",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys / Bedding / Accessories",contents:"Pink crossbody bag; extra bedding; American Girl doll motorcycle; Barbie camper",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-14",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Decor",contents:"American Girl doll ice cream truck; wall mirror",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-15",room:"Bailey's Room",fragile:true,priority:2,cat:"Accessories / Decor / Misc",contents:"Hats; eyeglasses; Paris light; Annie poster; bedtime stories script; Millennium Falcon 3D print; pottery / Belle item; back-of-door hanging storage organizer; coins",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"BR-16",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Music",contents:"American Girl doll salon; drum",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"BR-09",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"Stuffed animals",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-10",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Misc",contents:"Shelf; American Girl doll stroller; walkie talkies; snake (3D print); Tamagotchi; Great Wolf Lodge wand; American Girl doll locker; two heart Legos; flashlight; microphone; 3 DVDs; exercise ball; rock paper scissors bots; frisbee cord; LOL doll glasses; seashell; misc knick knacks",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-11",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys",contents:"American Girl dolls",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-12",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Accessories",contents:"American Girl doll dog house; blue Barbie car; Barbie accessory bin; Polaroid camera; owl pen holder; pink fuzzy onesie; pink swan necklace ramekin; leather purse",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-13",room:"Bailey's Room",fragile:false,priority:2,cat:"Toys / Bedding / Accessories",contents:"Pink crossbody bag; extra bedding; American Girl doll motorcycle; Barbie camper",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-14",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Decor",contents:"American Girl doll ice cream truck; wall mirror",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-15",room:"Bailey's Room",fragile:true,priority:2,cat:"Accessories / Decor / Misc",contents:"Hats; eyeglasses; Paris light; Annie poster; bedtime stories script; Millennium Falcon 3D print; pottery / Belle item; back-of-door hanging storage organizer; coins",notes:"",caution:false,dest:"Bailey's Room"},
+  {id:"BR-16",room:"Bailey's Room",fragile:true,priority:2,cat:"Toys / Music",contents:"American Girl doll salon; drum",notes:"",caution:false,dest:"Bailey's Room"},
   {id:"CLO-01",room:"Laundry Closet",fragile:false,priority:2,cat:"Laundry",contents:"Laundry supplies",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"CR-01",room:"Cole's Room",fragile:false,priority:2,cat:"Games / Puzzles",contents:"Throw Throw Burrito; Harry Potter Deck Building Game; Pixar puzzle; Do You Really Know Your Family?; Mantis; Coup; Sleeping Queens; Sussed?; ice cream puzzle; candy puzzle; toy puzzle; 3 escape room game packs; Mind the Gap; Harry Potter playing card set; Salem; cat and dog puzzle; Sherlock Express; Paris puzzle; big Disney puzzle; fountain and shops puzzle",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"CR-01",room:"Cole's Room",fragile:false,priority:2,cat:"Games / Puzzles",contents:"Throw Throw Burrito; Harry Potter Deck Building Game; Pixar puzzle; Do You Really Know Your Family?; Mantis; Coup; Sleeping Queens; Sussed?; ice cream puzzle; candy puzzle; toy puzzle; 3 escape room game packs; Mind the Gap; Harry Potter playing card set; Salem; cat and dog puzzle; Sherlock Express; Paris puzzle; big Disney puzzle; fountain and shops puzzle",notes:"",caution:false,dest:"Cole's Room"},
   {id:"CR-02",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games",contents:"Clue games (multiple); Monopoly games (multiple); Dude Perfect Tic-Tac-Toe",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"CR-03",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games / Puzzles / Toys",contents:"Junior Detective; Minecraft game; Gravity Maze; Concept Kids; Headbands; Stratego; The Walking Dead game; Cole's Color Tower puzzle; Sketchy Tales; Bernie Avalanche stuffed animal; hockey light-up figurine",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"CR-04",room:"Cole's Room",fragile:false,priority:3,cat:"Toys / Games",contents:"Guns, Bullets, and Cars of Colts (toy set); Nathan MacKinnon figurine hockey stick (broken piece); bungee table hockey puck game",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"CR-03",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games / Puzzles / Toys",contents:"Junior Detective; Minecraft game; Gravity Maze; Concept Kids; Headbands; Stratego; The Walking Dead game; Cole's Color Tower puzzle; Sketchy Tales; Bernie Avalanche stuffed animal; hockey light-up figurine",notes:"",caution:false,dest:"Cole's Room"},
+  {id:"CR-04",room:"Cole's Room",fragile:false,priority:3,cat:"Toys / Games",contents:"Guns, Bullets, and Cars of Colts (toy set); Nathan MacKinnon figurine hockey stick (broken piece); bungee table hockey puck game",notes:"",caution:false,dest:"Cole's Room"},
   {id:"CR-05",room:"Cole's Room",fragile:false,priority:1,cat:"Favorite Board Games",contents:"Wavelength; Labyrinth; Disney Trivia; Catan; Ticket to Ride; Resistance; Qwirkle (large)",notes:"Open first",caution:false,dest:"Storage Unit"},
   {id:"CR-06",room:"Cole's Room",fragile:true,priority:2,cat:"Hockey Keepsakes",contents:"Keepsake books; hockey memories; hockey pucks; hockey decor",notes:"",caution:false,dest:"Storage Unit"},
   {id:"CR-07",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games",contents:"Pictionary; Chess; Ringer; Splendor; Taco Cat; Taboo; Element; Jenga; Wonder Woman: Challenge of the Amazons",notes:"",caution:false,dest:"Storage Unit"},
   {id:"CR-08",room:"Cole's Room",fragile:false,priority:2,cat:"Board Games / Costume / Decor",contents:"Escape Detention; Trekking the World; Mycelia; Go Go Gelato; Battleship; I Love You a Bushel wall portrait; dinosaur costume; giant egg",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"CR-09",room:"Cole's Room",fragile:false,priority:2,cat:"Toys / Decor",contents:"Dude Perfect board game; Dude Perfect spinner; Pokemon items; laser tag guns (all); gumball machine; stuffed animals / bears; Bears hockey wall decor; moose wall hooks",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"CR-10",room:"Cole's Room",fragile:false,priority:2,cat:"Books",contents:"Kids books",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"CR-11",room:"Cole's Room",fragile:false,priority:2,cat:"Mark Rober / STEM Stuff",contents:"Mark Rober stuff",notes:"Mark Rober items / STEM items",caution:false,dest:"Bunting Farm"},
-  {id:"CR-12",room:"Cole's Room",fragile:false,priority:2,cat:"Games",contents:"Board games",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"CR-09",room:"Cole's Room",fragile:false,priority:2,cat:"Toys / Decor",contents:"Dude Perfect board game; Dude Perfect spinner; Pokemon items; laser tag guns (all); gumball machine; stuffed animals / bears; Bears hockey wall decor; moose wall hooks",notes:"",caution:false,dest:"Cole's Room"},
+  {id:"CR-10",room:"Cole's Room",fragile:false,priority:2,cat:"Books",contents:"Kids books",notes:"",caution:false,dest:"Cole's Room"},
+  {id:"CR-11",room:"Cole's Room",fragile:false,priority:2,cat:"Mark Rober / STEM Stuff",contents:"Mark Rober stuff",notes:"Mark Rober items / STEM items",caution:false,dest:"Cole's Room"},
+  {id:"CR-12",room:"Cole's Room",fragile:false,priority:2,cat:"Games",contents:"Board games",notes:"",caution:false,dest:"Cole's Room"},
   {id:"G-01",room:"Garage",fragile:false,priority:3,cat:"Lawn / Yard / Chemicals",contents:"Lawn and yard supplies; weed killer; rust stain remover; diatomaceous earth insect killer powder; adhesive spray; ceramic tile caulk; fast-dry acrylic caulk; anti-bird ultrasonic device; new deadbolt; small flower pots; potting mix; mice killer; Arbor plant food; survival garden heirloom seeds; watermelon seeds",notes:"Red tub; keep upright",caution:true,dest:"Papa's Shop"},
   {id:"G-02",room:"Garage",fragile:false,priority:3,cat:"Christmas Decor",contents:"Small Christmas tree",notes:"",caution:false,dest:"Papa's Shop"},
-  {id:"G-03",room:"Garage",fragile:false,priority:3,cat:"Automotive / Sprays / Flammable",contents:"10W40 motorcycle oil; Armor All; STA-BIL fuel stabilizer; 5W30 oil; SAE 30 oil; DOT 4 brake fluid; funnel; 10W30 semi-synthetic oil; Goo Gone; car air freshener spray; WD-40; Black Flag insect killer; Green Slime; wood glue; electrical cleaner spray; small bottle of butane; bicycle chain lube; bicycle sprocket; battery charger",notes:"Keep upright",caution:true,dest:"Bunting Farm"},
-  {id:"G-04",room:"Garage",fragile:false,priority:3,cat:"Tools / Firework Parts / Accessories",contents:"Firework mortars; mortar tube; steering wheel lock; battery charger wire; fish tape / wire fisher; DeWalt drill battery chargers (2)",notes:"Keep upright",caution:true,dest:"Bunting Farm"},
+  {id:"G-03",room:"Garage",fragile:false,priority:3,cat:"Automotive / Sprays / Flammable",contents:"10W40 motorcycle oil; Armor All; STA-BIL fuel stabilizer; 5W30 oil; SAE 30 oil; DOT 4 brake fluid; funnel; 10W30 semi-synthetic oil; Goo Gone; car air freshener spray; WD-40; Black Flag insect killer; Green Slime; wood glue; electrical cleaner spray; small bottle of butane; bicycle chain lube; bicycle sprocket; battery charger",notes:"Keep upright",caution:true,dest:"Garage"},
+  {id:"G-04",room:"Garage",fragile:false,priority:3,cat:"Tools / Firework Parts / Accessories",contents:"Firework mortars; mortar tube; steering wheel lock; battery charger wire; fish tape / wire fisher; DeWalt drill battery chargers (2)",notes:"Keep upright",caution:true,dest:"Garage"},
   {id:"G-05",room:"Garage",fragile:false,priority:3,cat:"Rock Climbing Gear",contents:"Rock climbing gear",notes:"",caution:false,dest:"Papa's Shop"},
   {id:"G-06",room:"Garage",fragile:false,priority:3,cat:"Adhesives / Tools / Small Parts",contents:"Riddick citrus odor eliminator; Gorilla Glue; duct tape; butane; soldering iron; garage hook; small bag of baby-proofing items; DeWalt battery end caps (2)",notes:"Little white tub; keep upright; DeWalt battery end caps are here",caution:true,dest:"Papa's Shop"},
-  {id:"G-07",room:"Garage",fragile:false,priority:3,cat:"Sports / Outdoor Toys",contents:"Frisbee; soccer balls; footballs; water balloons; baseball bat; kite",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"G-07",room:"Garage",fragile:false,priority:3,cat:"Sports / Outdoor Toys",contents:"Frisbee; soccer balls; footballs; water balloons; baseball bat; kite",notes:"",caution:false,dest:"Garage"},
   {id:"G-08",room:"Garage",fragile:false,priority:3,cat:"Hockey Gear",contents:"Hockey pucks; hockey balls; hockey breezers; hockey gloves; chest pad",notes:"Entire box is hockey only",caution:false,dest:"Papa's Shop"},
-  {id:"G-09",room:"Garage",fragile:false,priority:3,cat:"Hockey Gear",contents:"Hockey ice skates; hockey rollerblades; Cole's stick handling trainer",notes:"Older hockey gear, not used in a while",caution:false,dest:"Bunting Farm"},
+  {id:"G-09",room:"Garage",fragile:false,priority:3,cat:"Hockey Gear",contents:"Hockey ice skates; hockey rollerblades; Cole's stick handling trainer",notes:"Older hockey gear, not used in a while",caution:false,dest:"Garage"},
   {id:"G-11",room:"Garage",fragile:false,priority:3,cat:"Storage",contents:"Shoes",notes:"",caution:false,dest:"Papa's Shop"},
   {id:"H-01",room:"Household",fragile:true,priority:2,cat:"Photos / Wall Decor",contents:"Photos; wall decor",notes:"Mixed household decor from around the house",caution:false,dest:"Storage Unit"},
   {id:"H-02",room:"Household",fragile:false,priority:2,cat:"Decor / Chalkboards",contents:"House decor; chalkboards",notes:"",caution:false,dest:"Storage Unit"},
@@ -163,22 +157,22 @@ const BOXES = [
   {id:"H-04",room:"Household",fragile:true,priority:2,cat:"Photos / Decor",contents:"Photos; decor",notes:"",caution:false,dest:"Storage Unit"},
   {id:"H-05",room:"Household",fragile:true,priority:2,cat:"Decor / Photos",contents:"House decor; photos",notes:"",caution:false,dest:"Storage Unit"},
   {id:"H-06",room:"Household",fragile:true,priority:2,cat:"Keepsakes",contents:"Atari; decor",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"K-01",room:"Kitchen",fragile:true,priority:2,cat:"Linens / Dishware",contents:"Bamboo tea towels; tea saucers; white tea towel napkins",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-02",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware / Dishware",contents:"Coffee cups; tea towels; tea cups; tea dishes",notes:"Open first",caution:false,dest:"Bunting Farm"},
-  {id:"K-03",room:"Kitchen",fragile:true,priority:2,cat:"Coffee / Appliance",contents:"Coffee carafes; miscellaneous coffee items; jerky dehydrator",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-04",room:"Kitchen",fragile:true,priority:2,cat:"Appliances / Serveware",contents:"Jerky dehydrator trays/components; popcorn makers; large plastic chips bowl; flat serving trays; tea towels",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-05",room:"Kitchen",fragile:true,priority:1,cat:"Serveware / Utensils",contents:"Salad bowl; salad serving utensils; cheese grater; lemonade pitcher; small salsa bowls; small cabinet bowls; random serving trays",notes:"Open first",caution:false,dest:"Bunting Farm"},
-  {id:"K-06",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups; water bottles",notes:"Open first",caution:false,dest:"Bunting Farm"},
+  {id:"K-01",room:"Kitchen",fragile:true,priority:2,cat:"Linens / Dishware",contents:"Bamboo tea towels; tea saucers; white tea towel napkins",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-02",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware / Dishware",contents:"Coffee cups; tea towels; tea cups; tea dishes",notes:"Open first",caution:false,dest:"Kitchen"},
+  {id:"K-03",room:"Kitchen",fragile:true,priority:2,cat:"Coffee / Appliance",contents:"Coffee carafes; miscellaneous coffee items; jerky dehydrator",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-04",room:"Kitchen",fragile:true,priority:2,cat:"Appliances / Serveware",contents:"Jerky dehydrator trays/components; popcorn makers; large plastic chips bowl; flat serving trays; tea towels",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-05",room:"Kitchen",fragile:true,priority:1,cat:"Serveware / Utensils",contents:"Salad bowl; salad serving utensils; cheese grater; lemonade pitcher; small salsa bowls; small cabinet bowls; random serving trays",notes:"Open first",caution:false,dest:"Kitchen"},
+  {id:"K-06",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups; water bottles",notes:"Open first",caution:false,dest:"Kitchen"},
   {id:"K-07",room:"Kitchen",fragile:true,priority:2,cat:"Glassware / Linens",contents:"Glass vases; glass jars; aprons",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"K-08",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware / Linens",contents:"Kitchen canisters; hot pads; hand towels",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-09",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups",notes:"Open first",caution:false,dest:"Bunting Farm"},
-  {id:"K-10",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Fondue pots; large water bottle; high carrier",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-11",room:"Kitchen",fragile:true,priority:2,cat:"Seasonal / Drinkware",contents:"Christmas cupcake stand; serving platter; martini glasses; margarita glasses",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-12",room:"Kitchen",fragile:true,priority:2,cat:"Dishware / Appliance",contents:"Serving platter; food sign; small ramekins; hand mixer",notes:"",caution:false,dest:"Bunting Farm"},
-  {id:"K-13",room:"Kitchen",fragile:true,priority:3,cat:"Seasonal",contents:"Christmas dishes",notes:"Seasonal",caution:false,dest:"Bunting Farm"},
+  {id:"K-08",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware / Linens",contents:"Kitchen canisters; hot pads; hand towels",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-09",room:"Kitchen",fragile:true,priority:1,cat:"Drinkware",contents:"Coffee cups",notes:"Open first",caution:false,dest:"Kitchen"},
+  {id:"K-10",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Fondue pots; large water bottle; high carrier",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-11",room:"Kitchen",fragile:true,priority:2,cat:"Seasonal / Drinkware",contents:"Christmas cupcake stand; serving platter; martini glasses; margarita glasses",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-12",room:"Kitchen",fragile:true,priority:2,cat:"Dishware / Appliance",contents:"Serving platter; food sign; small ramekins; hand mixer",notes:"",caution:false,dest:"Kitchen"},
+  {id:"K-13",room:"Kitchen",fragile:true,priority:3,cat:"Seasonal",contents:"Christmas dishes",notes:"Seasonal",caution:false,dest:"Kitchen"},
   {id:"K-14",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Glass jars; juicer",notes:"",caution:false,dest:"Storage Unit"},
   {id:"K-15",room:"Kitchen",fragile:true,priority:2,cat:"Kitchenware",contents:"Red candy dish; red olive oil pitcher; glass canisters; jars",notes:"",caution:false,dest:"Storage Unit"},
-  {id:"K-16",room:"Kitchen",fragile:true,priority:2,cat:"Dishware",contents:"Sushi dishes; white ramekins; white celebrity dish set; crystal bowl",notes:"",caution:false,dest:"Bunting Farm"},
+  {id:"K-16",room:"Kitchen",fragile:true,priority:2,cat:"Dishware",contents:"Sushi dishes; white ramekins; white celebrity dish set; crystal bowl",notes:"",caution:false,dest:"Kitchen"},
   {id:"K-17",room:"Kitchen",fragile:true,priority:2,cat:"Tea Kettles",contents:"Tea kettles; full box of tea kettles",notes:"",caution:false,dest:"Storage Unit"},
   {id:"K-18",room:"Kitchen",fragile:true,priority:2,cat:"Dishware / Serveware",contents:"Plastic plates; white stone serving bowl; glass vase; microwave bowl holders; plastic bowl; nice glasses",notes:"",caution:false,dest:"Storage Unit"},
   {id:"K-19",room:"Kitchen",fragile:false,priority:2,cat:"Small Appliance / Toy",contents:"Easy-Bake Oven",notes:"",caution:false,dest:"Storage Unit"},
@@ -195,7 +189,7 @@ const BOXES = [
   {id:"K-30",room:"School",fragile:false,priority:2,cat:"Homeschool Supplies",contents:"Assorted homeschool materials",notes:"",caution:false,dest:"Storage Unit"},
   {id:"K-34",room:"Kitchen",fragile:false,priority:2,cat:"Cookware / Appliances",contents:"Crock-Pot; Tupperware pieces; oven roaster pan; stainless steel pot; mortar and pestle; wood cutting board",notes:"",caution:false,dest:"Storage Unit"},
   {id:"K-33",room:"Kitchen",fragile:true,priority:1,cat:"Organizers",contents:"Drawer divider; canisters",notes:"Open first",caution:false,dest:"Storage Unit"},
-  {id:"LR-01",room:"Living Room / Closet",fragile:false,priority:2,cat:"Linens",contents:"Blankets",notes:"Large box",caution:false,dest:"Bunting Farm"},
+  {id:"LR-01",room:"Living Room / Closet",fragile:false,priority:2,cat:"Linens",contents:"Blankets",notes:"Large box",caution:false,dest:"Living Room"},
   {id:"LR-02",room:"Living Room",fragile:true,priority:2,cat:"Electronics",contents:"Speakers",notes:"",caution:false,dest:"Storage Unit"},
   {id:"MBR-05",room:"Master Bedroom",fragile:false,priority:3,cat:"Clothing",contents:"Storage clothes",notes:"",caution:false,dest:"Storage Unit"},
   {id:"MBR-06",room:"Master Bedroom",fragile:true,priority:2,cat:"Electronics / Keepsakes / Accessories",contents:"Printer; Alysha purses; leather purses; notebooks; old photos; Nintendo system; nebulizer; printer paper",notes:"",caution:false,dest:"Storage Unit"},
@@ -221,16 +215,29 @@ function getFiltered() {
   else if (activeFilter === 'fragile') results = results.filter(b => b.fragile);
   else if (activeFilter === 'priority') results = results.filter(b => b.priority === 1);
   else if (activeFilter === 'caution') results = results.filter(b => b.caution);
-  else if (activeFilter === 'farm') results = results.filter(b => b.dest === 'Bunting Farm');
   return results;
 }
 
+const ROOM_EMOJI = {
+  "Bailey's Room": '🎀',
+  "Cole's Room": '🎮',
+  'Kitchen': '🍳',
+  'Bathroom': '🛁',
+  'Garage': '🔧',
+  'Living Room': '🛋️',
+  'Master Bedroom': '🛏️',
+  'Storage Unit': '🏢',
+  "Papa's Shop": '🔧'
+};
+const ROOM_LABEL = {
+  'Storage Unit': 'Storage',
+  "Papa's Shop": "Papa's Shop"
+};
+
 function cardHTML(b) {
-  const destBadge = b.dest === 'Storage Unit'
-    ? `<span class="badge badge-storage">🏢 Storage</span>`
-    : b.dest === "Papa's Shop"
-    ? `<span class="badge badge-shop">🔧 Papa's Shop</span>`
-    : `<span class="badge badge-farm">🌾 Bunting Farm</span>`;
+  const roomEmoji = ROOM_EMOJI[b.dest] || '📦';
+  const roomLabel = ROOM_LABEL[b.dest] || b.dest;
+  const destBadge = `<span class="badge badge-dest">${roomEmoji} ${roomLabel}</span>`;
   const fragBadge = b.fragile ? `<span class="badge badge-fragile">FRAGILE</span>` : '';
   const prioBadge = b.priority === 1
     ? `<span class="badge badge-priority1">⭐ Open First</span>`
